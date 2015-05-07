@@ -13,14 +13,14 @@ function copyPartials() {
 }
 
 gulp.task('less', function () {
-    return gulp.src('assets/less/bs.less')
+    return gulp.src('assets/less/main.less')
         .pipe(plugins.less({compress: true}))
         .pipe(gulp.dest('static/assets/css'));
 });
 
 gulp.task('scripts', function () {
     return gulp.src(['assets/js/vendor/socialite.js', 'assets/js/**/*.js'])
-        .pipe(plugins.concat('bs.js'))
+        .pipe(plugins.concat('main.js'))
         .pipe(plugins.uglify())
         .pipe(gulp.dest('static/assets/js'));
 });
@@ -48,7 +48,7 @@ gulp.task('copy', [], function () {
 });
 
 gulp.task('build-static', ['clean-static', 'less', 'scripts', 'copy'], function () {
-    return gulp.src(['static/assets/js/bs.js', 'static/assets/css/bs.css', 'layouts/partials/head.html'], {base: path.join(process.cwd(), 'static')})
+    return gulp.src(['static/assets/js/main.js', 'static/assets/css/main.css', 'layouts/partials/head.html'], {base: path.join(process.cwd(), 'static')})
         .pipe(plugins.revAll({
             ignore: [/^\/favicon.ico$/g, '.png', '.html', /.*vendor.*/, /.*nano.*/, /.*favicon.*/]
 
@@ -73,6 +73,8 @@ gulp.task('html-clean', function() {
         .pipe(gulp.dest('./dist/'))
 });
 
+
+// todo make this general
 gulp.task('gitinfo', function(cb) {
     return plugins.gitinfo()
         .pipe(es.map(function(data, cb) {
@@ -87,7 +89,7 @@ gulp.task('gitinfo', function(cb) {
 
 gulp.task('aws-publish', ['build'], function () {
 
-    var publisher = plugins.awspublish.create(JSON.parse(fs.readFileSync(process.env.HOME + '/.aws/bepsays.json')));
+    var publisher = plugins.awspublish.create(JSON.parse(fs.readFileSync(process.env.HOME + '/.aws/'  + process.env.site + '.json')));
 
     return gulp.src('./dist/**')
         .pipe(plugins.awspublishRouter({
