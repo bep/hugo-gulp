@@ -18,7 +18,14 @@ gulp.task('less', function () {
         .pipe(gulp.dest('static/assets/css'));
 });
 
-gulp.task('scripts', function () {
+gulp.task('scripts-noinstant', function () {
+    return gulp.src(['bower_components/instantclick/instantclick.js'])
+        .pipe(plugins.concat('main-noinstant.js'))
+        .pipe(plugins.uglify())
+        .pipe(gulp.dest('static/assets/js'));
+});
+
+gulp.task('scripts', ['scripts-noinstant'], function () {
     return gulp.src(['assets/js/vendor/socialite.js', 'assets/js/**/*.js'])
         .pipe(plugins.concat('main.js'))
         .pipe(plugins.uglify())
@@ -48,7 +55,7 @@ gulp.task('copy', [], function () {
 });
 
 gulp.task('build-static', ['clean-static', 'less', 'scripts', 'copy'], function () {
-    return gulp.src(['static/assets/js/main.js', 'static/assets/css/main.css', 'layouts/partials/head.html'], {base: path.join(process.cwd(), 'static')})
+    return gulp.src(['static/assets/js/main*.js', 'static/assets/css/main.css', 'layouts/partials/head.html'], {base: path.join(process.cwd(), 'static')})
         .pipe(plugins.revAll({
             ignore: [/^\/favicon.ico$/g, '.png', '.html', /.*vendor.*/, /.*nano.*/, /.*favicon.*/]
 
